@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+	
+	<div class="panelTools" id="leftTool">
+		<div style="margin: 20px auto;">
+			<div class="etalonRect" id="rect" onclick="drag_and_drop(this.id)"></div>
+		</div>
+		<!--<div class="etalonArc" id="arc" onclick="drag_and_drop(this.id)"></div>-->
+	</div>
+
+	<div class="editor">
+		<canvas id="canvas1" width = '1000px' height = '500px'>Your browser does not support canvas</canvas>
+		<canvas id="canvasBack1" width = '1000px' height='500px'></canvas>
+	</div>
+
+	<div class="changeElement" id="changeElem">
+		<p id="identificatorElem"></p>
+
+		<p>width</p>
+		<input type="text" id="widthElem" onchange="changeWidthElem(this.value)">
+		<div class="clearfix"></div>
+		<button class="changeBtn" onclick="addWidthElem()">+</button>
+		<button class="changeBtn" onclick="minusWidthElem()">-</button>
+
+		<p>height</p>
+		<input type="text" id="heightElem" onchange="changeHeightElem(this.value)">
+		<div class="clearfix"></div>
+		<button class="changeBtn" onclick="addHeightElem()">+</button>
+		<button class="changeBtn" onclick="minusHeightElem()">-</button>
+
+		<div class="clearfix"></div>
+
+		<button class="changeBtn" onclick="deleteById()">delete</button>
+		<div class="clearfix"></div>
+	</div>
+
+</body>
+</html>
