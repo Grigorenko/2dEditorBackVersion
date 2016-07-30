@@ -15,6 +15,7 @@ var canvas;
 	var listObj = [];
 	var item = {};
 	var prevChooseCanvas = false;
+	var removeNewCanvas = false;
 		
 	window.onload = function(){
 		canvas = document.getElementById("canvas1");
@@ -38,6 +39,14 @@ var canvas;
 		var yk = canvas.height+yn;
 
 		var flag = false;
+/*
+console.log(rect.offsetLeft +' ' +rect.offsetWidth +' ' +rect.offsetTop +' ' +rect.offsetHeight )
+		if (event.clientX > rect.offsetLeft && event.clientX < (rect.offsetLeft + rect.offsetWidth) &&
+			event.clientY > rect.offsetTop && event.clientY < (rect.offsetTop + rect.offsetHeight) ) {
+			//alert('rect');
+			drag_and_drop('rect');
+		}
+*/		
 		
 		//if cursor in boundares canvas
 		if (event.clientX>xn && event.clientX<xk &&
@@ -46,7 +55,7 @@ var canvas;
 			//put start point
 			pointX = event.clientX-xn;
 			pointY = event.clientY-yn;
-
+/*
 				if(pointX > item.xn && 
 					pointX < item.xk &&
 					pointY > item.yn && 
@@ -56,7 +65,7 @@ var canvas;
 							drag_and_drop(document.getElementById('newCanvas'));
 							flag = true;
 						}
-			
+			*/
 
 			for (var i = 0; i < listObj.length; i++) {
 				if(pointX > (listObj[i].xk <= listObj[i].xn ? listObj[i].xk : listObj[i].xn) && 
@@ -78,6 +87,7 @@ var canvas;
 					}
 					//если попал на нарисованный rect
 					moveElem(listObj[i].id);
+					removeNewCanvas = true;
 					flag = true;
 					prevChooseCanvas = true;
 				}
@@ -87,10 +97,16 @@ var canvas;
 				prevChooseCanvas = false;
 				showChangedPanel();
 
-				listObj.push(item);
+				
 				//console.log(listObj);
+				
+				if (removeNewCanvas) {
+					listObj.push(item);
+					removeCanvas();
+					removeNewCanvas = false;
+				}
+
 				drawAllElem();
-				removeCanvas();
 			}
 		}
 		else{
@@ -109,17 +125,24 @@ var canvas;
 
 			if (event.clientX > xn && event.clientX < xk &&
 				event.clientY > yn && event.clientY < yk) {
-
+				//alert('editDiv');
 			}
 		else{
 			edit = false;
 				prevChooseCanvas = false;
 				showChangedPanel();
 
-				listObj.push(item);
+				
 				//console.log(listObj);
+				
+				//removeCanvas();
+				if (removeNewCanvas) {
+					listObj.push(item);
+					removeCanvas();
+					removeNewCanvas = false;
+				}
+
 				drawAllElem();
-				removeCanvas();
 		}
 		}
 	};
@@ -142,7 +165,7 @@ var canvas;
   		break;
   }
 }
-
+//var ball = document.getElementById('rect');
 	function drag_and_drop(id) {
 		//console.log(id);
 		var left = 0;
@@ -163,8 +186,8 @@ var canvas;
 		  // передвинуть мяч под координаты курсора
 		  // и сдвинуть на половину ширины/высоты для центрирования
 		  function moveAt(e) {
-		    ball.style.left = e.pageX - ball.offsetWidth / 2 + 'px'; left = e.pageX - 204 - ball.offsetWidth / 2;
-		    ball.style.top = e.pageY - ball.offsetHeight / 2 + 'px'; top = e.pageY - 1 - ball.offsetHeight / 2;
+		    ball.style.left = e.pageX - ball.offsetWidth / 2 + 'px'; left = e.pageX - editorField.offsetLeft - 1 - ball.offsetWidth / 2;
+		    ball.style.top = e.pageY - ball.offsetHeight / 2 + 'px'; top = e.pageY - editorField.offsetTop - 1 - ball.offsetHeight / 2;
 		  }
 
 		  // 3, перемещать по экрану
@@ -178,17 +201,17 @@ var canvas;
 		    ball.onmouseup = null;
 
 		    //alert('left '+left+' top '+top);
-		    ball.style.top = '10px';
-			ball.style.left = '10px';
+		    ball.style.top = '25px';
+			ball.style.left = '25px';
 
 			drawNewElem(left, top);
 		  }
 		}
-
+/*
 		ball.ondragstart = function() {
 			
 		  return false;
-		};
+		};*/
 	}
 
 	function drawNewElem(x, y) {
@@ -276,10 +299,12 @@ var canvas;
 			}
 			console.log(item);
 			drawNewElem(leftElem, topElem);*/
+			var ww = item.xk - item.xn;
+			var hh = item.yk - item.yn;
 			item.xn = leftElem;
 			item.yn = topElem;
-			item.xk = item.xn + 50;
-			item.yk = item.yn + 50;
+			item.xk = item.xn + ww;
+			item.yk = item.yn + hh;
 
 		  }
 		}
@@ -363,3 +388,41 @@ var canvas;
 		showChangedPanel();
 		prevChooseCanvas = false;
 	};
+
+	function generateArrangement(){
+		xml = JSONtoXML(JSON.stringify( listObj ), 'place');
+		console.log(xml);
+		alert(xml);
+	};
+
+	function JSONtoXML(json, nameTag){
+	var xml = '';
+	var listObj = [];
+
+while (json.indexOf("{") != -1){
+	var last = json.indexOf("}");
+	var first = json.slice(json.indexOf("{")+1,json.indexOf("}"));
+	//console.log(first);
+	json = json.slice(last+1);
+	//console.log(json);
+
+	var field = first.split(",");
+	//console.log(field);
+	listObj.push(field);
+}
+	//console.log(listObj);
+
+	for (var j = 0; j < listObj.length; j++) {
+		xml += '<' + nameTag + '>' + '\n';
+		for (var i = 0; i < listObj[j].length; i++) {
+			xml += '\t' + '<'+listObj[j][i].slice(0,listObj[j][i].indexOf(":")).replace(/"/g,'')+'>';
+			xml += listObj[j][i].slice(listObj[j][i].indexOf(":")+1).replace(/"/g,'');
+			xml += '</'+listObj[j][i].slice(0,listObj[j][i].indexOf(":")).replace(/"/g,'')+'>'+'\n';
+		}
+		xml += '</' + nameTag + '>' + '\n';
+	}
+
+	//console.log(xml);
+
+	return xml;
+};

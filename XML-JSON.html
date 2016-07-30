@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="style.css" media="screen" />
+	<script   src="https://code.jquery.com/jquery-3.1.0.js"   integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous"></script>
+
+	<script>
+	var json;
+	var xml;
+/*
+	var arr = [];
+	arr.push({"Id":"1", "Name":"Sara", "Age":"14"});
+	arr.push({"Id":"2", "Name":"Clare", "Age":"20"});
+	arr.push({"Id":"3", "Name":"David", "Age":"23"});
+	arr.push({"Id":"4", "Name":"Lincoln", "Age":"31"});
+	arr.push({"Id":"5", "Name":"Abram", "Age":"22"});
+*/
+			function jsonToXml(arr) {
+		        //json = JSON.stringify( arr );
+		        //console.log(json);
+		        xml = JSONtoXML(JSON.stringify( arr ), 'place');
+				console.log(xml);
+		};
+
+		function xmlToObj(xml){
+
+			//json = XMLtoJSON(xml, 'place');
+			//console.log(json);
+
+			var obj = JSON.parse(XMLtoJSON(xml, 'place'));
+			console.log(obj);
+		};
+
+
+
+
+
+
+
+
+function JSONtoXML(json, nameTag){
+	var xml = '';
+	var listObj = [];
+
+while (json.indexOf("{") != -1){
+	var last = json.indexOf("}");
+	var first = json.slice(json.indexOf("{")+1,json.indexOf("}"));
+	//console.log(first);
+	json = json.slice(last+1);
+	//console.log(json);
+
+	var field = first.split(",");
+	//console.log(field);
+	listObj.push(field);
+}
+	//console.log(listObj);
+
+	for (var j = 0; j < listObj.length; j++) {
+		xml += '<' + nameTag + '>' + '\n';
+		for (var i = 0; i < listObj[j].length; i++) {
+			xml += '\t' + '<'+listObj[j][i].slice(0,listObj[j][i].indexOf(":")).replace(/"/g,'')+'>';
+			xml += listObj[j][i].slice(listObj[j][i].indexOf(":")+1).replace(/"/g,'');
+			xml += '</'+listObj[j][i].slice(0,listObj[j][i].indexOf(":")).replace(/"/g,'')+'>'+'\n';
+		}
+		xml += '</' + nameTag + '>' + '\n';
+	}
+
+	//console.log(xml);
+
+	return xml;
+};
+
+
+
+
+
+
+
+
+
+function XMLtoJSON(xml, nameTag){
+	var json = '[';
+	var listObj = [];
+
+	while(xml.indexOf('<' + nameTag) != -1) {
+		var last = xml.indexOf('/' + nameTag);
+		var first = xml.slice(xml.indexOf(nameTag + '>')+nameTag.length+1, xml.indexOf('</' + nameTag));
+		//console.log(first);
+
+		xml = xml.slice(last + nameTag.length);
+		//console.log(xml);
+
+		var param = first.split('\n');
+
+		for (var i = 0; i < param.length; i++) {		
+				param[i] = param[i].replace(/\t/g, '');
+				param[i] = param[i].slice(1, param[i].indexOf('</'));
+		}
+		param = param.slice(1);
+		param = param.slice(0, param.length - 1);
+		listObj.push(param);
+	}
+
+	//console.log(listObj);
+
+	for (var j = 0; j < listObj.length; j++) {
+		json += '{';
+		for (var i = 0; i < listObj[j].length; i++) {
+			json += '"' + listObj[j][i].slice(0, listObj[j][i].indexOf('>')).toString();
+			json += '":"';
+			json += listObj[j][i].slice(listObj[j][i].indexOf('>')+1) + '"';
+
+			if (i != listObj[j].length - 1) {
+				json += ',';
+			}
+		}
+		if (j != listObj.length-1) {
+			json += '},';
+		}
+		else
+			json += '}';
+	}
+
+	//console.log(json + ']');
+
+	return json + ']';
+};
+
+
+	</script>
+</head>
+<body>
+	
+	<button onclick="jsonToXml()">Object TO XML</button>
+	<button onclick="xmlToObj()">XML TO Oblect</button>
+
+</body>
+</html>

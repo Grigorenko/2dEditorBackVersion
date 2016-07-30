@@ -2,23 +2,26 @@
 <html>
 <head>
 	<link rel="stylesheet" href="style.css" media="screen" />
-	<script src="script.js"></script>
+	
+	<script   src="https://code.jquery.com/jquery-3.1.0.js"   integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="   crossorigin="anonymous"></script>
 </head>
 <body>
 	
 	<div class="panelTools" id="leftTool">
+	<button onclick="generateArrangement()">Save</button>
 		<div style="margin: 20px auto;">
-			<div class="etalonRect" id="rect" onclick="drag_and_drop(this.id)"></div>
+			<div class="etalonRect" id="rect" onmousedown="drag_and_drop(this.id)"></div>
 		</div>
 		<!--<div class="etalonArc" id="arc" onclick="drag_and_drop(this.id)"></div>-->
 	</div>
 
-	<div class="editor">
+	<div class="editor" id="editorField">
 		<canvas id="canvas1" width = '1000px' height = '500px'>Your browser does not support canvas</canvas>
 		<canvas id="canvasBack1" width = '1000px' height='500px'></canvas>
 	</div>
 
 	<div class="changeElement" id="changeElem">
+
 		<p id="identificatorElem"></p>
 
 		<p>width</p>
@@ -38,6 +41,8 @@
 		<button class="changeBtn" onclick="deleteById()">delete</button>
 		<div class="clearfix"></div>
 	</div>
+
+	<script src="script.js"></script>
 
 </body>
 </html>
